@@ -2,6 +2,8 @@
 Не зависит от pygame (прямоугольники — кортежи (x, y, w, h) в пикселях), поэтому тестируется без окна.
 Игрок, враги и снаряды спрашивают у комнаты, можно ли им туда двигаться.
 """
+import math
+
 from src import settings
 
 
@@ -24,6 +26,9 @@ class Room:
         self.background = data["background"]
         self.size_px = (data["size"][0] * tile, data["size"][1] * tile)
         self.walls = [_px(w, tile) for w in data["walls"]]
+        # стены выложены по клеткам: проверка «есть ли стена в этих клетках» вместо перебора всех стен
+        self._wall_cells = {(cx, cy) for wx, wy, ww, wh in data["walls"]
+                            for cx in range(wx, wx + ww) for cy in range(wy, wy + wh)}
         d = data.get("door")
         self.door = _px(d["pos"], tile) if d else None
         self.door_locked_until_clear = bool(d and d.get("locked_until_clear"))
@@ -55,8 +60,13 @@ class Room:
     # ---------- столкновения ----------
     def blocked(self, rect):
         r = tuple(rect)
-        if any(intersects(r, w) for w in self.walls):
-            return True
+        x, y, w, h = r
+        t = self.tile
+        cells = self._wall_cells
+        for cx in range(math.floor(x / t), math.ceil((x + w) / t)):
+            for cy in range(math.floor(y / t), math.ceil((y + h) / t)):
+                if (cx, cy) in cells:
+                    return True
         if self.door is not None and not self.door_open and intersects(r, self.door):
             return True
         return False

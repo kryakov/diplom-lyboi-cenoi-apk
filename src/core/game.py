@@ -12,7 +12,8 @@ from src.core.scene_manager import SceneManager
 from src.scenes.menu_scene import MenuScene
 from src.scenes.game_scene import GameScene
 from src.scenes.end_scene import EndScene
-from src.systems.touch import ON_WEB, Touch
+from src.systems.audio import preload_sounds
+from src.systems.touch import ON_WEB, Touch, on_android
 
 
 def make_dpi_aware():
@@ -48,12 +49,16 @@ def open_window(fullscreen):
 class Game:
     def __init__(self):
         make_dpi_aware()
+        if ON_WEB or on_android():
+            # большой буфер звука: в браузере и на телефоне кадр иногда задерживается, и маленький буфер заикается
+            pygame.mixer.pre_init(44100, -16, 2, 4096)
         pygame.init()
         self.screen = open_window(getattr(settings, "FULLSCREEN", True))
         pygame.display.set_caption(settings.TITLE)
         self.clock = pygame.time.Clock()
         self.running = True
         self.touch = Touch()
+        preload_sounds()   # раскодировать звуки заранее, а не в момент первого выстрела
         self.scenes = SceneManager(self)
         self.scenes.register("menu", MenuScene(self))
         self.scenes.register("game", GameScene(self))

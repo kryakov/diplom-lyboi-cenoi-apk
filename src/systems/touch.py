@@ -54,6 +54,19 @@ def portrait_in_browser():
         return False
 
 
+def go_fullscreen():
+    """Браузер на телефоне: весь экран и горизонтально. Разрешено только в ответ на касание, поэтому зовётся из handle.
+    Safari на iPhone так не умеет, там полный экран даёт «На экран Домой»."""
+    try:
+        import platform as web
+        doc = web.window.document
+        if not doc.fullscreenElement:
+            doc.documentElement.requestFullscreen()
+        web.window.screen.orientation.lock("landscape")
+    except Exception:
+        pass
+
+
 def touch_device():
     return on_android() or touch_screen_in_browser()
 
@@ -83,6 +96,7 @@ class Touch:
     def __init__(self):
         self.active = touch_device()   # на ПК включится само, если коснуться сенсорного экрана
         self.fingers = {}       # id -> {"role": "move"|"aim"|"button", "start": (x, y), "pos": (x, y)}
+        self._layer = None      # прозрачный слой под джойстики, создаётся один раз
 
     def _stick(self, role):
         for f in self.fingers.values():
@@ -99,6 +113,8 @@ class Touch:
         if event.type not in (pygame.FINGERDOWN, pygame.FINGERMOTION, pygame.FINGERUP):
             return False
         self.active = True
+        if ON_WEB and event.type == pygame.FINGERDOWN:
+            go_fullscreen()
         pos = to_frame(event.x, event.y)
         fid = event.finger_id
         if event.type == pygame.FINGERDOWN:
@@ -155,7 +171,10 @@ class Touch:
             return
         if not self.active or scene_name != "game":
             return
-        layer = pygame.Surface((settings.SCREEN_W, settings.SCREEN_H), pygame.SRCALPHA)
+        if self._layer is None:
+            self._layer = pygame.Surface((settings.SCREEN_W, settings.SCREEN_H), pygame.SRCALPHA)
+        layer = self._layer
+        layer.fill((0, 0, 0, 0))
         for role in ("move", "aim"):
             stick = self._stick(role)
             if stick:

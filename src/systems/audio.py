@@ -31,16 +31,30 @@ def _find(folder, name):
     return None
 
 
+SOUND_NAMES = ("shoot", "hit", "kill", "death", "pickup")
+
+
+def _load(name):
+    path = _find(SOUND_DIR, name)
+    try:
+        return pygame.mixer.Sound(str(path)) if path else None
+    except pygame.error:
+        return None
+
+
+def preload_sounds():
+    if _init():
+        for name in SOUND_NAMES:
+            if name not in _sounds:
+                _sounds[name] = _load(name)
+
+
 def play_sound(name, volume=0.6):
     """Короткий звук из assets/sounds/<name>.ogg|wav|mp3. Нет файла или звука: тишина, без ошибки."""
     if not _init():
         return
     if name not in _sounds:
-        path = _find(SOUND_DIR, name)
-        try:
-            _sounds[name] = pygame.mixer.Sound(str(path)) if path else None
-        except pygame.error:
-            _sounds[name] = None
+        _sounds[name] = _load(name)
     sound = _sounds[name]
     if sound is not None:
         sound.set_volume(volume)

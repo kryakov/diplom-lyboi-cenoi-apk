@@ -32,7 +32,20 @@ jobs:
           cp icon.png stage/diplom/favicon.png
           python -m pygbag --build --title "Диплом любой ценой" stage/diplom
           cd stage/diplom/build/web
-          sed -i 's|<meta name="apple-mobile-web-app-capable" content="yes"/>|&<link rel="apple-touch-icon" href="favicon.png"/>|' index.html
+          sed -i 's|<meta name="apple-mobile-web-app-capable" content="yes"/>|&<link rel="apple-touch-icon" href="favicon.png"/><link rel="manifest" href="manifest.webmanifest"/>|' index.html
+          cat > manifest.webmanifest <<'JSON'
+          {
+            "name": "Диплом любой ценой",
+            "short_name": "Диплом",
+            "start_url": "./",
+            "display": "fullscreen",
+            "orientation": "landscape",
+            "background_color": "#1C1C2E",
+            "theme_color": "#1C1C2E",
+            "icons": [{"src": "favicon.png", "sizes": "512x512", "type": "image/png"}]
+          }
+          JSON
+          grep -c manifest index.html
           ls -l
 
       - uses: actions/upload-pages-artifact@v3
