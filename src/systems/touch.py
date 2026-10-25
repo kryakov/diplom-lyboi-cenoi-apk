@@ -25,8 +25,37 @@ INK = (28, 28, 46)
 NOTE = (255, 214, 90)
 
 
+ON_WEB = sys.platform == "emscripten"
+
+
 def on_android():
     return hasattr(sys, "getandroidapilevel") or "ANDROID_ARGUMENT" in os.environ
+
+
+def touch_screen_in_browser():
+    """В браузере: палец вместо мыши (телефон или планшет). На ПК с мышью False."""
+    if not ON_WEB:
+        return False
+    try:
+        import platform as web
+        return bool(web.window.matchMedia("(pointer: coarse)").matches)
+    except Exception:
+        return False
+
+
+def portrait_in_browser():
+    """Телефон в браузере держат вертикально: кадр 16:9 получается мелким."""
+    if not ON_WEB:
+        return False
+    try:
+        import platform as web
+        return web.window.innerHeight > web.window.innerWidth
+    except Exception:
+        return False
+
+
+def touch_device():
+    return on_android() or touch_screen_in_browser()
 
 
 def to_frame(x, y):
@@ -52,7 +81,7 @@ def _press(key):
 
 class Touch:
     def __init__(self):
-        self.active = on_android()
+        self.active = touch_device()   # на ПК включится само, если коснуться сенсорного экрана
         self.fingers = {}       # id -> {"role": "move"|"aim"|"button", "start": (x, y), "pos": (x, y)}
 
     def _stick(self, role):
@@ -116,6 +145,14 @@ class Touch:
         self.fingers.clear()
 
     def draw(self, surface, scene_name, scene):
+        if self.active and portrait_in_browser():
+            from src.ui.text import draw_text
+            shade = pygame.Surface((settings.SCREEN_W, settings.SCREEN_H), pygame.SRCALPHA)
+            shade.fill((*INK, 210))
+            surface.blit(shade, (0, 0))
+            draw_text(surface, "Поверните телефон горизонтально", (settings.SCREEN_W // 2, settings.SCREEN_H // 2), 48,
+                      NOTE, center=True)
+            return
         if not self.active or scene_name != "game":
             return
         layer = pygame.Surface((settings.SCREEN_W, settings.SCREEN_H), pygame.SRCALPHA)

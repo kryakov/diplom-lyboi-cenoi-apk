@@ -1,3 +1,4 @@
+import asyncio
 import os
 import sys
 
@@ -11,7 +12,7 @@ from src.core.scene_manager import SceneManager
 from src.scenes.menu_scene import MenuScene
 from src.scenes.game_scene import GameScene
 from src.scenes.end_scene import EndScene
-from src.systems.touch import Touch
+from src.systems.touch import ON_WEB, Touch
 
 
 def make_dpi_aware():
@@ -34,6 +35,9 @@ def open_window(fullscreen):
     на Full HD ровно в 2 раза (1920x1080), на других экранах пропорционально, без сглаживания.
     F11 переключает окно и полный экран."""
     size = (settings.SCREEN_W, settings.SCREEN_H)
+    if ON_WEB:
+        # в браузере кадр растягивает сама страница, полного экрана SDL там нет
+        return pygame.display.set_mode(size)
     flags = pygame.SCALED | (pygame.FULLSCREEN if fullscreen else 0)
     try:
         return pygame.display.set_mode(size, flags)
@@ -56,6 +60,8 @@ class Game:
         self.scenes.register("end", EndScene(self))
 
     def quit(self):
+        if ON_WEB:
+            return      # в браузере закрывать нечего: «Выход» и Esc в меню ничего не делают
         self.running = False
 
     def toggle_fullscreen(self):
@@ -87,8 +93,10 @@ class Game:
             self.touch.draw(self.screen, self.scene_name(), self.scenes.current)
         pygame.display.flip()
 
-    def run(self):
+    async def run(self):
+        """Асинхронный цикл: в браузере (pygbag) кадр отдаётся странице через await, на ПК и Android работает как обычный."""
         while self.running:
             dt = self.clock.tick(settings.FPS) / 1000.0
             self.step(dt)
+            await asyncio.sleep(0)
         pygame.quit()

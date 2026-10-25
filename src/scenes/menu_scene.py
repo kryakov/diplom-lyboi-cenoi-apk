@@ -1,3 +1,4 @@
+import sys
 import pygame
 
 from src import settings
@@ -73,5 +74,10 @@ class MenuScene(Scene):
             color = (70, 90, 160) if i == self.index else (40, 45, 70)
             pygame.draw.rect(surface, color, r, border_radius=8)
             draw_text(surface, self._label(i), r.center, 28, center=True)
-        draw_text(surface, "↑/↓ — выбор, ←/→ — сложность, Enter — подтвердить, Esc — выход, F11 — окно",
-                  (480, 480), 18, (150, 150, 165), center=True)
+        if self.game.touch.active:
+            hint = "Коснитесь пункта: «Сложность» меняется по кругу"
+        elif sys.platform == "emscripten":
+            hint = "W/S — выбор, A/D — сложность, Enter — подтвердить"   # в браузерном шрифте нет стрелок
+        else:
+            hint = "↑/↓ — выбор, ←/→ — сложность, Enter — подтвердить, Esc — выход, F11 — окно"
+        draw_text(surface, hint, (480, 480), 18, (150, 150, 165), center=True)

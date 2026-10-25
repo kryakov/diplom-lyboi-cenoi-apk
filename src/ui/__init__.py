@@ -1,3 +1,4 @@
+import sys
 import pygame
 
 _fonts = {}
@@ -5,7 +6,10 @@ _fonts = {}
 
 def get_font(size):
     if size not in _fonts:
-        _fonts[size] = pygame.font.SysFont("arial,segoeui,dejavusans,liberationsans", size)
+        if sys.platform == "emscripten":
+            _fonts[size] = pygame.font.Font(None, size)  # в браузере системных шрифтов нет, встроенный умеет кириллицу
+        else:
+            _fonts[size] = pygame.font.SysFont("arial,segoeui,dejavusans,liberationsans", size)
     return _fonts[size]
 
 

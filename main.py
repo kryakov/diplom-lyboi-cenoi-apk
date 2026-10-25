@@ -1,11 +1,14 @@
+import asyncio
+
+import pygame  # noqa: F401  pygbag качает в браузер только пакеты, импортированные в main.py
+
 from src.core.game import Game
 
 
-def main():
+async def main():
     game = Game()
     game.scenes.change("menu")
-    game.run()
+    await game.run()
 
 
-if __name__ == "__main__":
-    main()
+asyncio.run(main())
