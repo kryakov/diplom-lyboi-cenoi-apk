@@ -46,7 +46,7 @@ jobs:
         if: failure()
         run: |
           sed -e 's/\x1b\[[0-9;]*m//g' build.log > clean.log
-          n=$(grep -n -E "Command failed|BuildozerCommandException|Traceback" clean.log | head -n 1 | cut -d: -f1)
+          n=$(grep -n -E "BUILD FAILED|FAILURE:|Command failed|filename not found|BuildozerCommandException" clean.log | tail -n 1 | cut -d: -f1)
           [ -z "$n" ] && n=$(wc -l < clean.log)
           from=$((n > 90 ? n - 90 : 1))
           sed -n "${from},$((n + 6))p" clean.log | grep -v -E "^\s*$|clang |\+\+ " | cut -c1-220 > part.log
@@ -55,7 +55,7 @@ jobs:
             msg=$(sed -e 's/%/%25/g' "$f" | awk '{printf "%s%%0A", $0}')
             echo "::error title=log $f::$msg"
           done
-          grep -n -E "error:|Error:|No module named|not found" clean.log | grep -v -E "Werror|DEBUG\]:\s+/" | tail -n 12 | cut -c1-220 > errs.log || true
+          grep -n -E "error:|Error:|No module named|not found|FAILED|What went wrong" clean.log | grep -v -E "Werror|SyntaxError|DEBUG\]:\s+/" | tail -n 12 | cut -c1-220 > errs.log || true
           msg=$(sed -e 's/%/%25/g' errs.log | awk '{printf "%s%%0A", $0}')
           echo "::error title=error lines::$msg"
 
