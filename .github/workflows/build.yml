@@ -42,15 +42,22 @@ jobs:
           set -o pipefail
           yes | buildozer -v android debug 2>&1 | tee build.log
 
-      - name: Show the end of the log on failure
+      - name: Show the error part of the log on failure
         if: failure()
         run: |
-          grep -v "^\s*$" build.log | tail -n 80 > tail.log || true
-          msg=$(sed -e 's/%/%25/g' tail.log | awk '{printf "%s%%0A", $0}')
-          echo "::error title=buildozer log tail::$msg"
-          grep -n -i -E "error|exception|failed" build.log | tail -n 40 > errs.log || true
+          sed -e 's/\x1b\[[0-9;]*m//g' build.log > clean.log
+          n=$(grep -n -E "Command failed|BuildozerCommandException|Traceback" clean.log | head -n 1 | cut -d: -f1)
+          [ -z "$n" ] && n=$(wc -l < clean.log)
+          from=$((n > 90 ? n - 90 : 1))
+          sed -n "${from},$((n + 6))p" clean.log | grep -v -E "^\s*$|clang |\+\+ " | cut -c1-220 > part.log
+          split -l 12 part.log chunk_
+          for f in chunk_*; do
+            msg=$(sed -e 's/%/%25/g' "$f" | awk '{printf "%s%%0A", $0}')
+            echo "::error title=log $f::$msg"
+          done
+          grep -n -E "error:|Error:|No module named|not found" clean.log | grep -v -E "Werror|DEBUG\]:\s+/" | tail -n 12 | cut -c1-220 > errs.log || true
           msg=$(sed -e 's/%/%25/g' errs.log | awk '{printf "%s%%0A", $0}')
-          echo "::error title=buildozer errors::$msg"
+          echo "::error title=error lines::$msg"
 
       - uses: actions/upload-artifact@v4
         with:
