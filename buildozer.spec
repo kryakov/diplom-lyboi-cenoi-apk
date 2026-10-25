@@ -7,7 +7,7 @@ source.include_exts = py,png,json,txt,ogg,wav,mp3,ttf
 source.exclude_dirs = tests,tools,docs,release,bin,.github
 source.exclude_patterns = README.md,buildozer.spec
 version = 1.0
-requirements = python3,pygame
+requirements = python3==3.10.14,hostpython3==3.10.14,pygame
 orientation = landscape
 fullscreen = 1
 icon.filename = %(source.dir)s/icon.png
