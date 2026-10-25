@@ -1,0 +1,28 @@
+{
+  "id": "boss_level2",
+  "name": "Хозяин сервера",
+  "kind": "boss",
+  "sprite": "boss_level2",
+  "hp": 40,
+  "speed": 80,
+  "contact_damage": 1,
+  "attacks": [
+    {
+      "type": "fan",
+      "projectiles": 10,
+      "spread_deg": 100,
+      "speed": 280,
+      "windup": 0.6,
+      "damage": 1,
+      "cooldown": 1.8
+    },
+    {
+      "type": "dash",
+      "speed": 560,
+      "duration": 0.5,
+      "windup": 0.5,
+      "damage": 1,
+      "cooldown": 2.6
+    }
+  ]
+}

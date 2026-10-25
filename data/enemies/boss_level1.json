@@ -1,0 +1,28 @@
+{
+  "id": "boss_level1",
+  "name": "Учительница английского",
+  "kind": "boss",
+  "sprite": "boss_level1",
+  "hp": 20,
+  "speed": 70,
+  "contact_damage": 1,
+  "attacks": [
+    {
+      "type": "fan",
+      "projectiles": 5,
+      "spread_deg": 60,
+      "speed": 260,
+      "windup": 0.6,
+      "damage": 1,
+      "cooldown": 2.8
+    },
+    {
+      "type": "dash",
+      "speed": 520,
+      "duration": 0.5,
+      "windup": 0.6,
+      "damage": 1,
+      "cooldown": 3.6
+    }
+  ]
+}

@@ -1,0 +1,15 @@
+{
+  "id": "formula_melee",
+  "name": "Интегралыч",
+  "kind": "melee",
+  "sprite": "enemy_formula_melee",
+  "hp": 6,
+  "speed": 190,
+  "contact_damage": 1,
+  "attack": {
+    "range": 38,
+    "windup": 0.35,
+    "cooldown": 1.0,
+    "damage": 1
+  }
+}

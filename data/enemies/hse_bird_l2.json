@@ -1,0 +1,16 @@
+{
+  "id": "hse_bird_l2",
+  "name": "Ворон ВШЭ",
+  "kind": "ranged",
+  "sprite": "enemy_hse_bird",
+  "hp": 3,
+  "speed": 160,
+  "contact_damage": 1,
+  "shoot": {
+    "range": 260,
+    "windup": 0.3,
+    "cooldown": 2.0,
+    "projectile_speed": 260,
+    "damage": 1
+  }
+}

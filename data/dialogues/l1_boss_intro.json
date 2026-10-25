@@ -1,0 +1,25 @@
+{
+  "id": "l1_boss_intro",
+  "lines": [
+    {
+      "speaker": "Учительница английского",
+      "text": "Dude, stop! Куда ты собрался?!"
+    },
+    {
+      "speaker": "Студент",
+      "text": "I am go to the exam. Я опаздываю, пропустите."
+    },
+    {
+      "speaker": "Учительница английского",
+      "text": "Present Continuous плачет. Без допуска к экзамену дальше нельзя."
+    },
+    {
+      "speaker": "Студент",
+      "text": "Допуск у меня в рюкзаке. Think about it."
+    },
+    {
+      "speaker": "Учительница английского",
+      "text": "Умник, show me how you can shoot, и целься лучше, чем speak."
+    }
+  ]
+}

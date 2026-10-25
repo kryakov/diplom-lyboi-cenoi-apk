@@ -1,0 +1,7 @@
+{
+  "levels": [
+    {"id": "level1", "name": "Печерка", "rooms": ["l1_entrance", "l1_battle1", "l1_battle2", "l1_boss"]},
+    {"id": "level2", "name": "Родионова", "rooms": ["l2_entrance", "l2_battle1", "l2_battle2", "l2_boss"]},
+    {"id": "level3", "name": "Львовка", "rooms": ["l3_entrance", "l3_battle1", "l3_battle2", "l3_boss"]}
+  ]
+}

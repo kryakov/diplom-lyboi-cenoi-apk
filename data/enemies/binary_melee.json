@@ -1,0 +1,15 @@
+{
+  "id": "binary_melee",
+  "name": "Нулевик",
+  "kind": "melee",
+  "sprite": "enemy_binary_melee",
+  "hp": 5,
+  "speed": 160,
+  "contact_damage": 1,
+  "attack": {
+    "range": 36,
+    "windup": 0.35,
+    "cooldown": 1.1,
+    "damage": 1
+  }
+}
