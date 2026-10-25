@@ -39,8 +39,9 @@ jobs:
 
       - name: Build
         run: |
-          set -o pipefail
-          yes | buildozer -v android debug 2>&1 | tee build.log
+          { yes || true; } | buildozer -v android debug 2>&1 | tee build.log
+          test "${PIPESTATUS[1]}" -eq 0
+          ls -l bin/
 
       - name: Show the error part of the log on failure
         if: failure()
