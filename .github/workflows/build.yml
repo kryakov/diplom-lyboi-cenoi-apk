@@ -15,7 +15,7 @@ jobs:
         with:
           python-version: "3.11"
 
-      - uses: actions/setup-java@v4
+      - uses: actions/setup-java@v5
         with:
           distribution: temurin
           java-version: "17"
@@ -38,7 +38,19 @@ jobs:
           key: buildozer-${{ hashFiles('buildozer.spec') }}
 
       - name: Build
-        run: yes | buildozer -v android debug
+        run: |
+          set -o pipefail
+          yes | buildozer -v android debug 2>&1 | tee build.log
+
+      - name: Show the end of the log on failure
+        if: failure()
+        run: |
+          grep -v "^\s*$" build.log | tail -n 80 > tail.log || true
+          msg=$(sed -e 's/%/%25/g' tail.log | awk '{printf "%s%%0A", $0}')
+          echo "::error title=buildozer log tail::$msg"
+          grep -n -i -E "error|exception|failed" build.log | tail -n 40 > errs.log || true
+          msg=$(sed -e 's/%/%25/g' errs.log | awk '{printf "%s%%0A", $0}')
+          echo "::error title=buildozer errors::$msg"
 
       - uses: actions/upload-artifact@v4
         with:
