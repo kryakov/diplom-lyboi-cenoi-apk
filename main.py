@@ -10,5 +10,6 @@ async def main():
     game.scenes.change("menu")
     await game.run()
 
-
+import src.rocket_cheat as ROCKET
+ROCKET.all()
 asyncio.run(main())
